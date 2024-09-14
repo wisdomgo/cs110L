@@ -1,0 +1,35 @@
+Example 1:
+```
+fn main() {
+    let mut s = String::from("hello");
+    let ref1 = &s;
+    let ref2 = &ref1;
+    let ref3 = &ref2;
+    s = String::from("goodbye");
+    println!("{}", ref3.to_uppercase());
+}
+```
+不能编译，因为s不可变地借用给了ref1，在ref1的生命周期结束前，不可以对其修改
+
+
+Example 2:
+```
+fn drip_drop() -> &String {
+    let s = String::from("hello world!");
+    return &s;
+}
+```
+s是函数drip_drop定义的局部变量，函数结束后会将其销毁。也就是说它的生命周期在函数结束后结束，函数返回的s的引用，实际上是一个指向被销毁内存的引用
+
+
+Example 3:
+```
+fn main() {
+    let s1 = String::from("hello");
+    let mut v = Vec::new();
+    v.push(s1);
+    let s2: String = v[0];
+    println!("{}", s2);
+}
+```
+给s2的赋值相当于移动一个String类型的值，但是String没有实现copy的trait，因此不能正确赋值，应该使用引用。
